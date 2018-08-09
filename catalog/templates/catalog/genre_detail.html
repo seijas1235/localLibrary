@@ -1,0 +1,43 @@
+{% extends "base_generic.html" %} {% block content %}
+<div class="container">
+  <h1>TEMA: {{ genre }} </h1>
+
+  <div style="margin-left:20px;margin-top:20px">
+    <h4>Libros de: <strong>{{genre}}</strong></h4>
+    <table class="table border-bordered" border="solid">
+        <thead class="thead-dark">
+          <th>
+           </th>
+          <Th>
+            <strong>NOMBRE</strong>
+          </Th>
+          <strong>
+            <th>
+              <strong>AUTOR</strong> 
+            </th>
+          </strong>
+          <Th>
+            <strong> DISPONIBLES </strong>
+          </Th>
+          <Th>
+            <strong> UBICACION </strong>
+          </Th>
+          <th>
+            <STRong>SUCURSAL</STRong> 
+          </th>
+      {% for book in genre.book_set.all %}
+      <tr>
+          <td></td>
+          <td>
+            <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
+          </td>
+          <td>{{book.author}}</td>
+          <td>{{book.available}}</td>
+          <td>{{book.location}}</td>
+          <td>{{book.library}}</td>
+        </tr>
+      {% endfor %}
+    </table>
+  </div>
+</div>
+{% endblock %}

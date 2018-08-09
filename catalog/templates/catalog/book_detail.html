@@ -1,0 +1,122 @@
+{% extends "base_generic.html" %}
+<div class="container">
+    {% block content %}
+    <div class="container">
+        <h1>Nombre: {{ book.title }}</h1>
+
+        <p>
+            <strong>Autor:</strong>
+            <a href="{% url 'author-detail' book.author.pk %}">{{ book.author }}</a>
+        </p>
+        <p>
+            <strong>Disponible:</strong> {{ book.available }}</p>
+        <p>
+            <strong>Ubicacion:</strong> {{ book.location }}</p>
+        <p>
+            <strong>Libreria:</strong> {{ book.library }}</p>
+        <p>
+            <strong>Genero:</strong> {{book.genre}}
+            <div style="margin-left:20px;margin-top:20px">
+                {% if request.user.profile.loans >= 10 %}
+                <p style="color:crimson">YA NO PUEDES PRESTAR MAS LIBROS, HAS LLEGADO AL LIMITE</p>
+                {% else %}
+
+                <div style="display:none">
+                    {% csrf_token %}
+                    <input type="text" id="user_id" value="{{user.pk}}" name="user">
+                    <input type="text" id="book_id" value="{{book.pk}}" name="book">
+                    <input type="text" id="state_id" value="1" name="state">
+                    <input type="text" id="tokem_id" name="tokem">
+                </div>
+                <div style="display:none">
+                    {% csrf_token %}
+                    <input type="text" id="title" value="{{book.title}}" name="title">
+                    <input type="text" id="author" value="{{book.author.pk}}" name="author">
+                    <input type="text" id="fecha_p" value="{{book.date_of_admission}}" name="date_of_admission">
+                    <input type="text" id="genre" value="{{book.genre.pk}}" name="genre">
+                    <input type="text" id="location" value="{{book.location}}" name="location">
+                    <input type="text" id="library" value="{{book.library.pk}}" name="library">
+                    <input type="text" id="created" value="{{book.created}}" name="created">
+                    <input type="text" id="contenido" value="{{book.available}}" name="available">
+                </div>
+                <input type="button" onclick="AjaxEjecutar()" value="Prestar"> {% if request.user.is_staff %}
+                <a href="{% url 'book_delete' book.pk %}">
+                    <input type="button" value="Eliminar">
+                </a>
+                <a href="{% url 'book_update' book.pk %}">
+                    <input type="button" value="Modificar">
+                </a>
+                {% else %} {% endif %} {% endif %}
+            </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+    <script>
+        var n = 15;
+        var chars = 'abcdefghijkmnpqrstuvwxyzABCDEFGHJKLMNOPQRSTUVWXYZ123456789';
+        var token = '';
+        for (var i = 0; i < n; i++) {
+            token += chars[Math.floor(Math.random() * chars.length)];
+        }
+        jQuery('#tokem_id').val(token)
+        var dis = parseInt(jQuery('#contenido').val());
+
+        function LibroRestar() {
+            var title = jQuery('#title').val();
+            jQuery.ajax({
+                url: "{% url 'book_update' book.pk %}",
+                type: 'post',
+                data: {
+                    csrfmiddlewaretoken: jQuery('input:hidden[name=csrfmiddlewaretoken]').val(),
+                    title: title,
+                    author: jQuery('#book_id').val(),
+                    date_of_admission: jQuery('#fecha_p').val(),
+                    genre: jQuery('#genre').val(),
+                    location: jQuery('#location').val(),
+                    library: jQuery('#library').val(),
+                    created: jQuery('#created').val(),
+                    available: dis - 1
+                },
+                dataType: 'json',
+                success: function respuesta() {},
+                error: function respuesta() {}
+            });
+        }
+
+
+        function AjaxEjecutar() {
+            LibroRestar();
+            var user = jQuery('#user_id').val();
+            jQuery.ajax({
+                url: '/catalog/loan/create/',
+                type: 'post',
+                data: {
+                    csrfmiddlewaretoken: jQuery('input:hidden[name=csrfmiddlewaretoken]').val(),
+                    user: user,
+                    book: jQuery('#book_id').val(),
+                    state: jQuery('#state_id').val(),
+                    tokem: jQuery('#tokem_id').val()
+                },
+                dataType: 'json',
+                success: function (respuesta) {
+                    conosle.log(respuesta)
+                    switch (parseInt(respuesta)) {
+                        case 1:
+                            window.location = 'book_list.html';
+                            break;
+                        default:
+                            mensaje = 'no fue posible procesar su prestamo.';
+                            jQuery('#div_mensaje').html(mensaje);
+                            break;
+                    }
+                },
+                error: function (error) {
+                    alert("Prestamo Exitoso ")
+                    console.log(error)
+                }
+            });
+        }
+    </script>
+
+    {% endblock %}
+
+</div>

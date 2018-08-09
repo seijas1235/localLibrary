@@ -1,0 +1,54 @@
+{% extends "base_generic.html" %} {% block content %}
+<h1>Listado de Libros</h1>
+{% if request.user.is_staff %}
+     <a href="{% url 'book_create' %}"> <input type="button" value="Añadir"></a>
+{% endif %}
+<div class="container">
+  {% if book_list %}
+  {{local}}
+    <table class="table border-bordered" border="solid">
+      <thead class="thead-dark">
+        <th>
+
+        </th>
+        <Th>
+          <strong>NOMBRE</strong>
+        </Th>
+        <strong>
+          <th>
+            <strong>GENERO</strong> 
+          </th>
+        </strong>
+        <Th>
+          <strong> DISPONIBLES </strong>
+        </Th>
+        <Th>
+          <strong> UBICACION </strong>
+        </Th>
+        <Th>
+          <strong> AUTOR </strong>
+        </Th>
+        <th>
+          <STRong>SUCURSAL</STRong> 
+        </th>
+      </thead>
+      {% for book in book_list %}
+      <tr>
+        
+        
+        <td></td>
+        <td>
+          <a href="{{ book.get_absolute_url }}">{{ book.title }}</a>
+        </td>
+        <td>{{book.genre}}</td>
+        <td>{{book.available}}</td>
+        <td>{{book.location}}</td>
+        <td>{{book.author}}</td>
+        <td>{{book.library}}</td>
+      </tr>
+      {% endfor %}
+    </table>
+</div>
+{% else %}
+<p>No hay Libros en este libreria.</p>
+{% endif %} {% endblock %}

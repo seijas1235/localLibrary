@@ -1,0 +1,188 @@
+{% extends "base_generic.html" %} {% block content %}
+<h1>Listado de Prestamos</h1>
+{% if request.user.is_staff %}
+<a href="{% url 'loan_create' %}">
+  <input type="button" value="Añadir">
+</a>
+{% endif %}
+
+{% if loan_list %}
+
+<div class="container">
+  <table class="table border-bordered" border="solid">
+    <thead class="thead-dark">
+      <Th>
+        <strong>USUARIO</strong>
+      </Th>
+      <th>
+        <strong>LIBRO</strong>
+      </th>
+      <Th>
+        <strong> AUTOR </strong>
+      </Th>
+      <Th>
+        <strong> FECHA DE PRESTAMO </strong>
+      </Th>
+      <Th>
+        <strong> FECHA DE DEVOLUCION </strong>
+      </Th>
+      <th>
+        <STRong>SUCURSAL</STRong>
+      </th>
+      <th>
+        <strong> ESTADO </strong>
+      </th>
+      <th><strong>TOKEN</strong></th>
+    </thead>
+    {% if request.user.is_staff %}
+
+    {% for loan in loan_list %} 
+    {% if loan.state.pk == 1 or loan.state.pk == 2 %}
+    
+        <tr>
+          <td>{{loan.user}}</td>
+          <td>
+            <a href="{{ loan.get_absolute_url }}">{{ loan.book }}</a>
+          </td>
+          <td>{{loan.book.author}}</td>
+          <td>{{loan.date_of_admission}}</td>
+          <td>{{loan.date_of_return}}</td>
+          <td>{{loan.book.library}}</td>
+          
+          {% if loan.state.pk == 1 %}
+          <TD class="text-danger">{{loan.state}} </TD> 
+          {% else %}
+          <TD class="text-success">{{loan.state}} </TD> 
+          {% endif %}
+
+
+          <td>{{loan.tokem}}</td>
+        </tr>
+        {% endif %}  
+    
+        {% endfor %}
+     
+    {% else %}
+     
+    {% for loan in loan_list %} 
+
+      {% if loan.user == user %}
+      {% if loan.state.pk == 1 or loan.state.pk == 2 %}
+    
+        <tr>
+          <td>{{loan.user}}</td>
+          <td>
+            <a href="{{ loan.get_absolute_url }}">{{ loan.book }}</a>
+          </td>
+          <td>{{loan.book.author}}</td>
+          <td>{{loan.date_of_admission|date:"SHORT_DATE_FORMAT"}}</td>
+          <td>{{loan.date_of_return|date:"SHORT_DATE_FORMAT"}}</td>
+          <td>{{loan.book.library}}</td>
+          {% if loan.state.pk == 1 %}
+          <TD class="text-danger">{{loan.state}} </TD> 
+          {% else %}
+          <TD class="text-success">{{loan.state}} </TD> 
+          {% endif %}
+          <td>{{loan.tokem}}</td>
+        </tr>
+        
+        {% endif %}
+        {% endif %}
+        {% endfor %} 
+      {% endif %}
+  </table>
+
+
+
+<h1>HISTORIAL</h1>
+
+<table class="table border-bordered" border="solid">
+    <thead class="thead-dark">
+      <Th>
+        <strong>USUARIO</strong>
+      </Th>
+      <th>
+        <strong>LIBRO</strong>
+      </th>
+      <Th>
+        <strong> AUTOR </strong>
+      </Th>
+      <Th>
+        <strong> FECHA DE PRESTAMO </strong>
+      </Th>
+      <Th>
+        <strong> FECHA DE DEVOLUCION </strong>
+      </Th>
+      <th>
+        <STRong>SUCURSAL</STRong>
+      </th>
+      <th>
+        <strong> ESTADO </strong>
+      </th>
+      <th><strong>TOKEN</strong></th>
+    </thead>
+    {% if request.user.is_staff %}
+
+    {% for loan in loan_list %} 
+    {% if loan.state.pk == 3 or loan.state.pk == 4 %}
+    
+
+        <tr>
+          <td>{{loan.user}}</td>
+          <td>
+            <a href="{{ loan.get_absolute_url }}">{{ loan.book }}</a>
+          </td>
+          <td>{{loan.book.author}}</td>
+          <td>{{loan.date_of_admission}}</td>
+          <td>{{loan.date_of_return}}</td>
+          <td>{{loan.book.library}}</td>
+          
+          {% if loan.state.pk == 1 %}
+          <TD class="text-danger">{{loan.state}} </TD> 
+          {% else %}
+          <TD class="text-success">{{loan.state}} </TD> 
+          {% endif %}
+
+
+          <td>{{loan.tokem}}</td>
+        </tr>
+        {% endif %}
+      {% endfor %}
+     
+    {% else %}
+     
+    {% for loan in loan_list %} 
+
+      {% if loan.user == user %}
+      {% if loan.state.pk == 3 or loan.state.pk == 4 %}
+
+        <tr>
+          <td>{{loan.user}}</td>
+          <td>
+            <a href="{{ loan.get_absolute_url }}">{{ loan.book }}</a>
+          </td>
+          <td>{{loan.book.author}}</td>
+          <td>{{loan.date_of_admission|date:"SHORT_DATE_FORMAT"}}</td>
+          <td>{{loan.date_of_return|date:"SHORT_DATE_FORMAT"}}</td>
+          <td>{{loan.book.library}}</td>
+          {% if loan.state.pk == 1 %}
+          <TD class="text-danger">{{loan.state}} </TD> 
+          {% else %}
+          <TD class="text-success">{{loan.state}} </TD> 
+          {% endif %}
+          <td>{{loan.tokem}}</td>
+        </tr>
+        {% endif %}
+    
+        {% endif %}
+    
+        {% endfor %} 
+      {% endif %}
+  </table>
+
+</div>
+
+{% else %}
+<p>No Tienes Libros Prestados </p>
+{% endif %}
+{% endblock %}

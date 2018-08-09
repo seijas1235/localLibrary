@@ -1,0 +1,138 @@
+{% extends "base_generic.html" %}
+<div class="container">
+    {% block content %}
+    <div class="container">
+        <h1>Usuario: {{ loan.user }}</h1>
+
+        <p>
+            <strong>Libro</strong> {{ loan.book }}</a>
+        </p>
+        <p>
+            <strong>Autor:</strong> {{ loan.book.author }}</a>
+        </p>
+        <p>
+            <strong>Genero:</strong> {{ loan.book.genre }}</p>
+        <p>
+            <strong>Fecha de Prestamo:</strong> {{ loan.date_of_admission }}</p>
+        <p>
+            <strong>Fecha de Devolucion:</strong> {{ loan.date_of_return }}</p>
+        <p>
+            <strong>Libreria:</strong> {{loan.book.library}}
+            <p>
+                <strong> Estado:</strong> {{loan.state}} </p>
+                <div style="margin-left:20px;margin-top:20px">
+                
+                <div style="display:none">
+                        {% csrf_token %}
+                            <input type="text" id="title" value="{{loan.book.title}}" name="title">
+                            <input type="text" id="author" value="{{loan.book.author.pk}}" name="author">
+                            <input type="text" id="fecha_p" value="{{loan.book.date_of_admission}}" name="date_of_admission">
+                            <input type="text" id="genre"  value="{{loan.book.genre.pk}}" name="genre">
+                            <input type="text" id="location" value="{{loan.book.location}}" name="location">
+                            <input type="text" id="library" value="{{loan.book.library.pk}}" name="library">
+                            <input type="text" id="created" value="{{loan.book.created}}" name="created">
+                            <input type="text" id="contenido" value="{{loan.book.available}}" name="available">
+                </div>
+                    {% if request.user.is_staff %} 
+                    {% if loan.state.pk == 3 or loan.state.pk == 4%} 
+                    {% else %}
+                    {% if loan.state.pk == 1 %}
+                    <div style="display:none">
+                            {% csrf_token %}
+                        <input type="text" id="user_id" value="{{loan.user.pk}}" name="user">    
+                        <input type="text" id="book_id" value="{{loan.book.pk}}" name="book">
+                        <input type="text" id="tokem_id" value="{{loan.tokem}}" name="tokem">
+                        <input type="text" id="state_id" value="3" name="state">
+                    </div>
+                    <input type="button" onclick="AjaxEjecutar()" value="Devolver">
+
+                {% elif loan.state.pk == 2 %}
+                <div style="display:none">
+                        {% csrf_token %}
+                        <input type="text" id="user_id" value="{{loan.user.pk}}" name="user">    
+                        <input type="text" id="book_id" value="{{loan.book.pk}}" name="book">
+                        <input type="text" id="tokem_id" value="{{loan.tokem}}" name="tokem">
+                        <input type="text" id="state_id" value="4" name="state">
+                </div>
+                 
+                <input type="button" onclick="AjaxEjecutar()" value="Devolver">
+
+                {% endif %}
+
+                {% endif %} {% endif %}
+
+
+            </div>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.3.1.js" integrity="sha256-2Kok7MbOyxpgUVvAk/HJ2jigOSYS2auK4Pfzbm7uH60=" crossorigin="anonymous"></script>
+
+<script>
+    var dis = parseInt(jQuery('#contenido').val());
+
+    function LibroSumar() {
+        var title = jQuery('#title').val();
+        console.log(jQuery('#author').val());
+        console.log(jQuery('#fecha_p').val());
+        console.log(jQuery('#genre').val());
+        jQuery.ajax({
+            url: "{% url 'book_update' loan.book.pk %}",
+            type: 'post',
+            data: {
+                csrfmiddlewaretoken: jQuery('input:hidden[name=csrfmiddlewaretoken]').val(),
+                title: title,
+                author: jQuery('#author').val(),
+                date_of_admission: jQuery('#fecha_p').val(),
+                genre: jQuery('#genre').val(),
+                location: jQuery('#location').val(),
+                library: jQuery('#library').val(),
+                created: jQuery('#created').val(),
+                available: dis + 1
+            },
+            dataType: 'json',
+            success: function respuesta() {},
+            error: function respuesta() {}
+        });
+    }
+
+
+    function AjaxEjecutar() {
+        LibroSumar();
+        var user = jQuery('#user_id').val();
+        var state = jQuery('#state_id').val();
+        console.log(state)
+        jQuery.ajax({
+            url: "{% url 'loan_update' loan.pk %}",
+            type: 'post',
+            data: {
+                csrfmiddlewaretoken: jQuery('input:hidden[name=csrfmiddlewaretoken]').val(),
+                user: user,
+                book: jQuery('#book_id').val(),
+                state: jQuery('#state_id').val(),
+                tokem: jQuery('#tokem_id').val()
+            },
+            dataType: 'json',
+            success: function (respuesta) {
+                respuesta
+                switch (parseInt(respuesta.status)) {
+                    case 200:
+                        window.location = 'book_list.html';
+                        break;
+                    default:
+                        mensaje = 'no fue posible procesar su prestamo.';
+                        jQuery('#div_mensaje').html(mensaje);
+                        break;
+                }
+            },
+            error: function (error) {
+                alert("Libro Devuelto Exitosamente ")
+                console.log(error)
+            }
+        });
+    }
+</script>
+
+
+
+
+    {% endblock %}
+</div>

@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+
+<html lang="es">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>Inicio | BIBLIOTECA</title>
+{% load static %}
+<script>
+  function FiltrosBorrar(){
+    localStorage.removeItem('id');
+  }
+</script>
+{% if request.user.is_authenticated %}
+<a href="{% url 'logout'  %}">
+    <input type="button" value="CERRAR SESION" onclick="FiltrosBorrar()"> </a>  
+{% else %}
+
+  <a href="{% url 'login'  %}">
+    <input type="button" value="INCIAR SECION"> </a>
+{% endif %}
+
+
+  <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/css/bootstrap.min.css" integrity="sha384-Smlep5jCw/wG7hdkwQ/Z5nLIefveQRIY9nfy6xoR1uRYBtpZgI6339F5dgvm/e9B"
+    crossorigin="anonymous">
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+    crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49"
+    crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.2/js/bootstrap.min.js" integrity="sha384-o+RDsa0aLu++PJvFqy8fFScvbHFLtbvScb8AjopnFD+iEQ7wo/CG0xlczd+2O/em"
+    crossorigin="anonymous"></script>
+
+  <!-- Fuentes -->
+  <link href="https://fonts.googleapis.com/css?family=Raleway:100,100i,200,200i,300,300i,400,400i,500,500i,600,600i,700,700i,800,800i,900,900i"
+    rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Lora:400,400i,700,700i" rel="stylesheet">
+  
+
+  
+    <script>
+      function LibrosFiltrar(){
+        var pp="<form action ='{% url 'books' %}' id='form_1' method='GET'> {% csrf_token %} <input type='HIDDEN' name='local' value='"+localStorage.getItem('id')+"'> <input type='submit' > </form>"
+        jQuery("#div_book").html(pp);
+        jQuery('#form_1').submit();
+      }
+    function AutoresFiltrar(){
+        var pp="<form action ='{% url 'authors' %}' id='form_2' method='GET'> {% csrf_token %} <input type='HIDDEN' name='local' value='"+localStorage.getItem('id')+"'> <input type='submit' > </form>"
+        jQuery("#div_author").html(pp);
+        jQuery('#form_2').submit();
+      }
+    function TemasFiltrar(){
+        var pp="<form action ='{% url 'genre' %}' id='form_3' method='GET'> {% csrf_token %} <input type='HIDDEN' name='local' value='"+localStorage.getItem('id')+"'> <input type='submit' > </form>"
+        jQuery("#div_genre").html(pp);
+        jQuery('#form_3').submit();
+      }
+    </script>
+
+
+
+</head>
+
+<body>
+
+  <!-- Navegación -->
+  {% if request.user.is_authenticated %}
+ <div style="display:none" id="div_book"></div>
+ <div style="display:none" id="div_genre"></div>
+ <div style="display:none" id="div_author"></div>
+  <nav class="navbar navbar-expand-lg bg-dark navbar-dark py-lg-4" id="mainNav">
+    <div class="container">
+      <a class="navbar-brand text-uppercase text-expanded font-weight-bold d-lg-none" href="{% url 'index' %}">Libreria</a>
+      <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarResponsive" aria-controls="navbarResponsive"
+        aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarResponsive">
+        <ul class="navbar-nav mx-auto">
+          <li class="nav-item  px-lg-4 {% if request.path == '/catalog/' %} active {% endif %}">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'index' %}">Inicio</a>
+          </li>
+          <li class="nav-item px-lg-4 {% if request.path == '/catalog/books/' %} active {% endif %}">
+            <a class="nav-link text-uppercase text-expanded"  onclick="LibrosFiltrar()" >Libros</a>
+          </li>
+          <li class="nav-item px-lg-4 {% if request.path == '/catalog/authors/' %} active {% endif %}">
+            <a class="nav-link text-uppercase text-expanded" onclick='AutoresFiltrar()'>Autores</a>
+          </li>
+          <li class="nav-item px-lg-4 {% if request.path == '/catalog/genre/' %} active {% endif %}">
+            <a class="nav-link text-uppercase text-expanded" onclick='TemasFiltrar()'>Temas</a>
+          </li>
+          <li class="nav-item px-lg-4 {% if request.path == '/catalog/loan/' %} active {% endif %}">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'loan' %}">Prestamos</a>
+          </li>
+          <li class="nav-item px-lg-4 {% if request.path == '/catalog/user/' %} active {% endif %}">
+            <a class="nav-link text-uppercase text-expanded" href="{% url 'profile' %}">{{user}}</a>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+ 
+  {% endif %}
+  
+  {% block content %}{% endblock %} {% block pagination %} {% if is_paginated %}
+  <nav class="pagination ">
+    <li class="page-item">
+      {% if page_obj.has_previous %}
+      <a href="{{ request.path }}?page={{ page_obj.previous_page_number }}" class="page-link">previous</a>
+      {% endif %}
+      <li class="page-current">
+        <a href="" class="page-link">Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}</a> .
+      </li>
+      {% if page_obj.has_next %}
+      <a href="{{ request.path }}?page={{ page_obj.next_page_number }}" class="page-link">next</a>
+      {% endif %}
+    </li>
+  </nav>
+  {% endif %} 
+  
+
+
+  {% endblock %}
+
+  
+  </div>
+  </div>
+
+  </div>
+</body>
+
+</html>

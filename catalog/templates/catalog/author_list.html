@@ -1,0 +1,76 @@
+{% extends "base_generic.html" %} {% block content %}
+
+<h1>Listado de Autores:</h1>
+{% if request.user.is_staff %}
+     <a href="{% url 'author_create' %}"> <input type="button" value="Añadir"></a>
+{% endif %}
+<div class="container">
+  {% if author_list %}
+  <ul>
+    <table class="table border-bordered" border="solid">
+      <thead class="thead-dark">
+        <th>
+          <strong>
+          </strong>
+        </th>
+        <th>
+          <strong>Nombres
+          </strong>
+        </th>
+
+        <th>
+          <strong>Apellidos
+          </strong>
+        </th>
+        <th>
+          <strong> Fecha de Nacimiento
+          </strong>
+        </th>
+        <th>
+          <strong>Fecha de Muerte
+          </strong>
+        </th>
+        <th>
+          <strong> Nacionalidad
+          </strong>
+        </th>
+        <th>
+          <strong>
+            Libros
+          </strong>
+        </th>
+
+
+      </thead>
+      {% for author in author_list %}
+      <tr>
+        <td>
+        </td>
+        <td>
+          <a href="{{ author.get_absolute_url }}" onclick="AutorFiltrar()"> {{ author.first_name}}
+        </td>
+        <td> {{author.last_name}} </td>
+        </a>
+        <td> {{author.date_of_birth}}</td>
+        <td> {% if author.date_of_death %}{{author.date_of_death}}{% endif %}</td>
+        <td> {{author.country}}
+        </td>
+        <td> {{author.books}} </td>
+
+      </tr>
+      {% endfor %}
+    </table>
+
+    <script>
+      function AutorFiltrar(_autor){
+        var pp="<form action ='{{ author.get_absolute_url }}' id='form_4' method='GET'> {% csrf_token %} <input type='HIDDEN' name='local' value='"+localStorage.getItem('id')+"'> <input type='submit' > </form>"
+        jQuery("#div_autores").html(pp);
+        jQuery('#form_4').submit();
+      }
+    </script>
+  </ul>
+</div>
+<div style="display:none" id="div_autores"></div>
+{% else %}
+<p>no hay autores disponibles.</p>
+{% endif %} {% endblock %}

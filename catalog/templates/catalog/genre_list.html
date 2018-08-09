@@ -1,0 +1,53 @@
+{% extends "base_generic.html" %} {% block content %}
+
+<h1>LISTA DE TEMAS</h1>
+{% if request.user.is_staff %}
+     <a href="{% url 'genre_create' %}"> <input type="button" value="Añadir"></a>
+{% endif %}
+<div class="container table-responsive " >
+  {% if genre_list %}
+    <table class="table table-dark" border="solid">
+      <thead class="thead-dark">
+        <th>
+          <strong>
+            Temas
+          </strong>
+        </th>
+        <th>
+          <strong>
+            Libros
+          </strong>
+        </th>
+        <th>
+          <strong>
+            Acciones
+          </strong>
+        </th>
+      </thead>
+      {% for genre in genre_list %}
+      <tr>
+        <td>
+          <a href="{{ genre.get_absolute_url }}"> {{ genre}}</a>
+        </td>
+        <td>
+          {{genre.books}}
+        </td>
+        {% if user.is_staff %}
+          <td>
+          <a href="{% url 'genre_update' genre.pk %}"><button class="btn btn-primary btn-lg" > Editar </button> </a>
+          <a href="{% url 'genre_delete' genre.pk %}"><button class="btn btn-secundary btn-lg">  Eliminar </button></a>
+        </td>
+        {% else %}
+        <td>
+        <a href="{{ genre.get_absolute_url }}"><button class="btn btn-primary btn-lg" > Ver </button> </a>
+        </td>
+        {% endif %}
+
+      </tr>
+      {% endfor %}
+    </table>
+
+</div>
+{% else %}
+<p>no hay autores disponibles.</p>
+{% endif %} {% endblock %}
