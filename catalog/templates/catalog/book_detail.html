@@ -111,7 +111,7 @@
                 },
                 error: function (error) {
                     alert("Prestamo Exitoso ")
-                    console.log(error)
+                    location.href="{% url 'loan' %}"
                 }
             });
         }

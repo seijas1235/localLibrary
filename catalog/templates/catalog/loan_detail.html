@@ -125,7 +125,7 @@
             },
             error: function (error) {
                 alert("Libro Devuelto Exitosamente ")
-                console.log(error)
+                location.href="{% url 'loan' %}"
             }
         });
     }

@@ -53,7 +53,7 @@ class SingUpView(CreateView):
 @method_decorator(login_required, name='dispatch')
 class ProfileUpdate(UpdateView):
     form_class=ProfileForm
-    success_url = reverse_lazy('profile') 
+    success_url = reverse_lazy('index') 
     template_name='registration/profile_form.html'
 
     def get_object(self):
