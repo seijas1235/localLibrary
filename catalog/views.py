@@ -67,7 +67,6 @@ class AuthorListView(generic.ListView):
     """
     model = Author
     paginate_by = 5 
-    model = Author
     
 
 
@@ -75,6 +74,7 @@ class AuthorDetailView(generic.DetailView):
     """
     Generic class-based detail view for an author.
     """
+    model = Author
 
 class LoanListView(generic.ListView):
     """
